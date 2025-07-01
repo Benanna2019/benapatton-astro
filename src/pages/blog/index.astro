@@ -1,0 +1,27 @@
+---
+import Card from '@/components/Card.astro';
+import Heading from '@/components/Heading.astro';
+import Section from '@/components/Section.astro';
+import Base from '@/layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { AppConfig } from '@/utils/AppConfig';
+const { title } = AppConfig;
+const { description } = AppConfig;
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => Date.parse(b.data.published) - Date.parse(a.data.published)
+);
+---
+
+<Base head={{ title, description }}>
+	<Section><Heading title="Posts" /></Section>
+	<Section>
+		{
+			posts.map((post: any) => (
+				<div class="mb-4 basis-1 last:mb-0">
+					<Card post={post} />
+				</div>
+			))
+		}
+	</Section>
+</Base>

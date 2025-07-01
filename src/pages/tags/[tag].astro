@@ -4,44 +4,33 @@ import Card from '@/components/Card.astro';
 import Base from '@/layouts/Base.astro';
 import Heading from '@/components/Heading.astro';
 import { AppConfig } from '@/utils/AppConfig';
-import { MarkdownInstance } from 'astro';
-import { sortPostsByDate } from '@/utils/data.util';
 
-export async function getStaticPaths(): Promise<any> {
-	const allPosts = Object.values(
-		import.meta.glob('../posts/*.md', { eager: true })
-	) as MarkdownInstance<any>[];
+import { getCollection, type CollectionEntry } from 'astro:content';
 
-	const allTags: Set<string> = new Set(
-		allPosts.map((post: MarkdownInstance<Record<string, any>>) => post.frontmatter.tags).flat()
-	);
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
 
-	return [...allTags].map((tag) => {
-		const filteredPosts = allPosts.filter((post: MarkdownInstance<Record<string, any>>) =>
-			post.frontmatter.tags.includes(tag)
-		);
+	// Get all unique tags from all posts
+	const allTags = posts.flatMap((post) => post.data.categories || []);
+	const uniqueTags = [...new Set(allTags)];
 
-		// Sort posts by pinned status and date
-		filteredPosts.sort(sortPostsByDate);
-
-		return {
-			params: { tag: tag },
-			props: {
-				posts: filteredPosts
-			}
-		};
-	});
+	return uniqueTags.map((tag) => ({
+		params: { tag },
+		props: { posts }
+	}));
 }
-
-interface Props {
-	posts: MarkdownInstance<Record<string, any>>[];
-}
-
-const { tag } = Astro.params;
-const title = AppConfig.title;
-const description = AppConfig.description;
 
 const { posts } = Astro.props;
+const { tag } = Astro.params as { tag: string };
+
+const filteredPosts = tag
+	? posts.filter((post: CollectionEntry<'blog'>) => post.data.categories?.includes(tag))
+	: [];
+
+console.log(posts);
+
+const title = AppConfig.title;
+const description = AppConfig.description;
 ---
 
 <Base head={{ title, description }}>
@@ -53,13 +42,11 @@ const { posts } = Astro.props;
 	</Section>
 	<Section>
 		{
-			posts
-				.filter((post: any) => post.frontmatter.tags?.includes(tag))
-				.map((post: any) => (
-					<div class="mb-4 basis-1 last:mb-0">
-						<Card post={post} />
-					</div>
-				))
+			filteredPosts.map((post) => (
+				<div class="mb-4 basis-1 last:mb-0">
+					<Card post={post} />
+				</div>
+			))
 		}
 	</Section>
 </Base>

@@ -8,10 +8,11 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const isPinned = post.frontmatter.isPinned === true;
+console.log(post);
+const isPinned = post.data.isPinned === true;
 ---
 
-<a href={post.url}>
+<a href={`/blog/${post.data.url}/`}>
 	<div
 		class="h-full rounded-2xl bg-stone-200/50 from-orange-900 via-amber-700 to-white p-[1px] text-sm shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4)] hover:bg-gradient-to-r dark:bg-gray-900"
 	>
@@ -22,17 +23,17 @@ const isPinned = post.frontmatter.isPinned === true;
 				<div class="flex flex-col justify-between gap-2 pb-4 text-xs">
 					<div class="flex items-center gap-2">
 						{isPinned && <PinnedBadge size="sm" />}
-						<p>{formatDate(post.frontmatter.pubDate)}</p>
+						<p>{formatDate(post.data.published)}</p>
 					</div>
 					<div>
-						<p class="font-bold">{post.frontmatter.minutesRead}</p>
+						<p class="font-bold">{post.data.minutesRead}</p>
 					</div>
 				</div>
 
-				<p class="pb-4 text-lg font-bold">{post.frontmatter.title}</p>
+				<p class="pb-4 text-lg font-bold">{post.data.title}</p>
 
-				<Tags tags={post.frontmatter.tags} />
-				<p class="line-clamp-6 pt-4">{post.frontmatter.excerpt}</p>
+				<Tags tags={post.data.categories} />
+				<p class="line-clamp-6 pt-4">{post.data.description}</p>
 			</div>
 			<p class="pt-4 underline">read more →</p>
 		</div>

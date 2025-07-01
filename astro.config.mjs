@@ -4,7 +4,9 @@ import rehypePrettyCode from 'rehype-pretty-code';
 import vercelStatic from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
+import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+
 const options = {
 	// Specify the theme to use or a custom theme json, in our case
 	// it will be a moonlight-II theme from
@@ -31,7 +33,7 @@ const options = {
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://astro-tech-blog-ten.vercel.app/',
+	site: 'http://localhost:4321',
 
 	markdown: {
 		syntaxHighlight: false,
@@ -40,7 +42,7 @@ export default defineConfig({
 		remarkPlugins: [remarkReadingTime]
 	},
 
-	integrations: [react(), sitemap()],
+	integrations: [react(), sitemap(), mdx()],
 	output: 'static',
 
 	adapter: vercelStatic({

@@ -6,7 +6,8 @@ import PostContent from '@/components/PostContent.astro';
 
 const { description } = AppConfig;
 
-const { frontmatter } = Astro.props;
+const frontmatter = Astro.props;
+console.log(frontmatter);
 ---
 
 <Base head={{ title: frontmatter.title, description }}>
@@ -14,11 +15,11 @@ const { frontmatter } = Astro.props;
 		<PostHeader
 			title={frontmatter.title}
 			author={frontmatter.author}
-			tags={frontmatter.tags}
+			tags={frontmatter.categories}
 			minutesRead={frontmatter.minutesRead}
 			pubDate={frontmatter.pubDate}
 			isPinned={frontmatter.isPinned}
-			img={{ src: frontmatter.image.src, alt: frontmatter.image.alt }}
+			img={{ src: frontmatter.image?.src, alt: frontmatter.image?.alt }}
 		/>
 		<PostContent><slot /></PostContent>
 	</div>
